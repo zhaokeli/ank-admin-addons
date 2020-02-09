@@ -24,8 +24,7 @@
             "validate\\": "validate",
             "utils\\": "utils",
             "middleware\\": "middleware"
-        },
-        "files": ["loadaddons.php"]
+        }
     },
     "extra":
     {
