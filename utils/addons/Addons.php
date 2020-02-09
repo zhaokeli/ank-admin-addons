@@ -39,8 +39,8 @@ class Addons
                     // var_dump($psr4);
                     foreach ($psr4 as $key => $value) {
                         // var_dump($)
-                        $path = realpath($path . '/' . $value);
-                        $path && self::$loader->addPsr4($key, $path, true);
+                        $filepath = realpath($path . '/' . $value);
+                        $filepath && self::$loader->addPsr4($key, $filepath, true);
                     }
                 }
             }
