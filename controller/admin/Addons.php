@@ -63,7 +63,9 @@ class Addons extends Base
      */
     public function lis()
     {
-        # code...
+        $this->assign(['meta_title' => '插件管理']);
+
+        return $this->fetch();
     }
 
     /**
