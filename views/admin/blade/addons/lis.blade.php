@@ -27,7 +27,7 @@
             <td class="td-center">@{{ item.author }}</td>
             <td class="td-center">
                 <template v-if="item.price>0">
-                    <i class="ank-icon ank-icon-money"></i>@{{ item.price }}
+                    <b class="red"><i style="color:#f00;" class="ank-icon ank-icon-money"></i>@{{ item.price }}</b>
                 </template>
                 <template v-else>
                     <b class="green">免费</b>
@@ -37,7 +37,7 @@
             <td class="td-center">@{{ item.version }}</td>
             <td>
                 <a v-show="!isInstalled(item.name)" href="javascript:;" @click="install(item)" class="btn"><i class="ank-icon ank-icon-cloud-download"></i>安装</a>
-                <a v-show="isInstalled(item.name)" href="javascript:;" @click="unInstall(item)" class="btn"><i class="ank-icon ank-icon-delete"></i>卸载</a>
+                <a v-show="isInstalled(item.name)" href="javascript:;" @click="unInstall(item)" class="btn btn-warning"><i class="ank-icon ank-icon-delete"></i>卸载</a>
             </td>
         </tr>
     </table>

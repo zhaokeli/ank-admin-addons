@@ -2,6 +2,7 @@
 namespace controller\admin;
 
 use ank\facade\App;
+use utils\admin\Com;
 use ZipArchive;
 
 /**
@@ -50,6 +51,7 @@ class Addons extends Base
             $zip->extractTo($addonsPath);
             $zip->close();
         }
+        $this->addonsInstall($addonsPath . '/InitScript.php', $addonsInfo['name']);
         $this->success('插件安装成功');
     }
 
@@ -99,7 +101,55 @@ class Addons extends Base
      */
     public function uninstall()
     {
+        $name          = input('name');
+        $temAddonsPath = App::getAppPath() . '/addons/' . $name;
+        $this->addonsUnInstall($temAddonsPath . '/InitScript.php', $name);
+        if (is_dir($temAddonsPath)) {
+            Com::delAllFile($temAddonsPath, true);
+        }
         $this->success('插件卸载成功');
+    }
+
+    /**
+     * 调用插件的安装脚本
+     * @authname [name]     0
+     * @DateTime 2020-02-12
+     * @Author   mokuyu
+     *
+     * @param  string   $value [description]
+     * @return [type]
+     */
+    private function addonsInstall($filePath = '', $addonsName = '')
+    {
+        include $filePath;
+        $sname = strtr($addonsName, [
+            '/' => '\\',
+            '-' => '',
+        ]);
+        $sname .= '\\InitScript';
+        $obj = new $sname();
+        $obj->install();
+    }
+
+    /**
+     * 调用插件的卸载脚本
+     * @authname [name]     0
+     * @DateTime 2020-02-12
+     * @Author   mokuyu
+     *
+     * @param  string   $value [description]
+     * @return [type]
+     */
+    private function addonsUnInstall($filePath = '', $addonsName = '')
+    {
+        include $filePath;
+        $sname = strtr($addonsName, [
+            '/' => '\\',
+            '-' => '',
+        ]);
+        $sname .= '\\InitScript';
+        $obj = new $sname();
+        $obj->UnInstall();
     }
 
     /**

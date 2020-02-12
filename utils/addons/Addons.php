@@ -6,9 +6,9 @@ namespace utils\addons;
  */
 class Addons
 {
-    private static $addonsDir = '';
+    protected static $addonsDir = '';
 
-    private static $loader = null;
+    protected static $loader = null;
 
     public static function getInstalledAddons()
     {
@@ -31,14 +31,6 @@ class Addons
                     }
                 }
             }
-            // while (false !== ($file = readdir($handle))) {
-            //     if ($file != '.' && $file != '..') {
-            //         if (is_dir(self::$addonsDir . DIRECTORY_SEPARATOR . $file)) {
-            //             //遍历子目录中所有插件
-            //             self::loadAddons(self::$addonsDir . DIRECTORY_SEPARATOR . $file);
-            //         }
-            //     }
-            // }
         }
 
         return $list;
