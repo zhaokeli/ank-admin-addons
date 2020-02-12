@@ -4,9 +4,9 @@
     <!--按钮和搜索区域-->
     <div class="tool-area cl">
         <div class="btn-tool">
-            {!! get_auth_btn(url(''),'全部') !!}
-            {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-hot"></i>免费') !!}
-            {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-money"></i>付费') !!}
+            <a href="javascript:;" @click="searchAddons(-1)" class="btn">全部</a>
+            <a href="javascript:;" @click="searchAddons(0)" class="btn"><i class="ank-icon ank-icon-hot"></i>免费</a>
+            <a href="javascript:;" @click="searchAddons(1)" class="btn"><i class="ank-icon ank-icon-money"></i>付费</a>
             {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-cloud-upload"></i>本地安装') !!}
             {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-user"></i>会员信息') !!}
         </div>
@@ -21,7 +21,7 @@
             <th width="100">版本</th>
             <th>操作</th>
         </tr>
-        <tr v-for="item in list">
+        <tr v-for="item in list" v-show="item.show">
             <td>@{{ item.title }}</td>
             <td>@{{ item.descr }}</td>
             <td class="td-center">@{{ item.author }}</td>

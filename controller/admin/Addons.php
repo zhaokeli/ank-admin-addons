@@ -2,6 +2,7 @@
 namespace controller\admin;
 
 use ank\facade\App;
+use ank\Utils;
 use utils\admin\Com;
 use ZipArchive;
 
@@ -50,6 +51,12 @@ class Addons extends Base
         if ($openRes === true) {
             $zip->extractTo($addonsPath);
             $zip->close();
+        }
+        $srcDir = App::getAppPath() . '/addons/' . $addonsInfo['name'] . '/public';
+        $desDir = App::getSiteRoot() . '/public';
+        //复制静态资源
+        if (is_dir($srcDir)) {
+            Utils::copyDir($srcDir, $desDir);
         }
         $this->addonsInstall($addonsPath . '/InitScript.php', $addonsInfo['name']);
         $this->success('插件安装成功');
@@ -101,12 +108,15 @@ class Addons extends Base
      */
     public function uninstall()
     {
-        $name          = input('name');
+        $name = input('name');
+        //删除静态资源,因为会误删除，所以下面就不删除啦,留给插件自己删除
+        // Com::delAllFile(App::getSiteRoot() . '/public/' . $name, true);
         $temAddonsPath = App::getAppPath() . '/addons/' . $name;
         $this->addonsUnInstall($temAddonsPath . '/InitScript.php', $name);
         if (is_dir($temAddonsPath)) {
             Com::delAllFile($temAddonsPath, true);
         }
+
         $this->success('插件卸载成功');
     }
 
