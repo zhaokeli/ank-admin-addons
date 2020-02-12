@@ -6,11 +6,48 @@ namespace utils\addons;
  */
 class Addons
 {
+    private static $addonsDir = '';
+
     private static $loader = null;
+
+    public static function getInstalledAddons()
+    {
+        $list = [];
+        if (is_dir(self::$addonsDir)) {
+            $listDir = scandir(self::$addonsDir);
+            foreach ($listDir as $key => $file) {
+                if (in_array($file, ['.', '..'])) {
+                    continue;
+                }
+                if (is_dir(self::$addonsDir . DIRECTORY_SEPARATOR . $file)) {
+                    $childDir = scandir(self::$addonsDir . DIRECTORY_SEPARATOR . $file);
+                    foreach ($childDir as $key => $value) {
+                        if (in_array($value, ['.', '..'])) {
+                            continue;
+                        }
+                        if (is_dir(self::$addonsDir . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . $value)) {
+                            $list[] = $file . '/' . $value;
+                        }
+                    }
+                }
+            }
+            // while (false !== ($file = readdir($handle))) {
+            //     if ($file != '.' && $file != '..') {
+            //         if (is_dir(self::$addonsDir . DIRECTORY_SEPARATOR . $file)) {
+            //             //遍历子目录中所有插件
+            //             self::loadAddons(self::$addonsDir . DIRECTORY_SEPARATOR . $file);
+            //         }
+            //     }
+            // }
+        }
+
+        return $list;
+    }
 
     public static function load($addonsDir, $loader)
     {
-        self::$loader = $loader;
+        self::$addonsDir = $addonsDir;
+        self::$loader    = $loader;
 
         if (is_dir($addonsDir)) {
             $handle = opendir($addonsDir);

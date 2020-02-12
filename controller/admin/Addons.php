@@ -41,7 +41,7 @@ class Addons extends Base
         //判断插件是不是已经安装
         $addonsPath = App::getAppPath() . '/addons/' . $addonsInfo['name'];
         if (is_dir($addonsPath)) {
-            $this->error('插件目录已经存在');
+            $this->error('此插件已经安装');
         }
 
         $zip     = new ZipArchive();
@@ -63,9 +63,30 @@ class Addons extends Base
      */
     public function lis()
     {
-        $this->assign(['meta_title' => '插件管理']);
+        if ($this->isAjax()) {
+            $info = [
+                'name'      => 'ank/comment',
+                'title'     => '插件标题',
+                'descr'     => '插件描述',
+                'author'    => '官方',
+                'downloads' => 10,
+                'version'   => '1.0.0',
+                'homepage'  => '',
+                'price'     => 100,
+                'qq'        => '',
+            ];
+            $list = [$info, $info, $info, $info, $info, $info, $info];
+            foreach ($list as $key => $value) {
+                if ($value['price'] == 0) {
+                    $list[$key]['price'] = '<b class="green">免费</b>';
+                }
+            }
+            $this->success(['list' => $list, 'installed' => \utils\addons\Addons::getInstalledAddons()]);
+        } else {
+            $this->assign(['meta_title' => '插件管理']);
 
-        return $this->fetch();
+            return $this->fetch();
+        }
     }
 
     /**
@@ -78,7 +99,7 @@ class Addons extends Base
      */
     public function uninstall()
     {
-        # code...
+        $this->success('插件卸载成功');
     }
 
     /**
