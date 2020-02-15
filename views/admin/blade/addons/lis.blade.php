@@ -1,5 +1,5 @@
 @extends("pub/base-iframe")
-@section("center")
+@section("main-area")
 <div class="main-con" id="app">
     <!--按钮和搜索区域-->
     <div class="tool-area cl">
