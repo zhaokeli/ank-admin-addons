@@ -1,6 +1,6 @@
 @extends("pub/base-iframe")
 @section("main-area")
-<div class="main-con" id="app">
+<div class="main-con addons" id="app">
     <!--按钮和搜索区域-->
     <div class="tool-area cl">
         <div class="btn-tool">
@@ -36,8 +36,8 @@
             <td class="td-center">@{{ item.downloads }}</td>
             <td class="td-center">@{{ item.version }}</td>
             <td>
-                <a v-show="!isInstalled(item.name)" href="javascript:;" @click="install(item)" class="btn"><i class="ank-icon ank-icon-cloud-download"></i>安装</a>
-                <a v-show="isInstalled(item.name)" href="javascript:;" @click="unInstall(item)" class="btn btn-warning"><i class="ank-icon ank-icon-delete"></i>卸载</a>
+                <a v-show="!isInstalled(item.name)" href="javascript:;" @click="install(item)" class="install"><i class="ank-icon ank-icon-cloud-download"></i>安装</a>
+                <a v-show="isInstalled(item.name)" href="javascript:;" @click="unInstall(item)" class="uninstall"><i class="ank-icon ank-icon-delete"></i>卸载</a>
             </td>
         </tr>
     </table>

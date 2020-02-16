@@ -11,6 +11,8 @@ use ZipArchive;
  */
 class Addons extends Base
 {
+    protected $apiUrl = 'http://www.zkeli.com/store.php';
+
     /**
      * 安装插件
      * @authname 安装插件     0
@@ -21,20 +23,14 @@ class Addons extends Base
      */
     public function install()
     {
-        $info = [
-            'name'      => 'ank/comment',
-            'title'     => '插件标题',
-            'descr'     => '插件描述',
-            'author'    => '',
-            'downloads' => 10,
-            'version'   => '1.0.0',
-            'homepage'  => '',
-            'price'     => 0,
-            'qq'        => '',
-        ];
-        $temAddonsPath = App::getRuntimePath() . '/addons/' . $info['name'] . '.zip';
+        $addons_id = input('addons_id', 0);
+        $info      = json_decode(file_get_contents($this->apiUrl . '?id=' . $addons_id), true);
+        if (!$info) {
+            $this->error('获取插件信息出错');
+        }
+        $temAddonsPath = App::getRuntimePath() . '/addons/' . $info['name'] . '-' . $info['version'] . '.zip';
         is_dir(dirname($temAddonsPath)) or mkdir(dirname($temAddonsPath), 777, true);
-        is_file($temAddonsPath) or file_put_contents($temAddonsPath, file_get_contents('http://www.zkeli.com/comment.zip'));
+        is_file($temAddonsPath) or file_put_contents($temAddonsPath, file_get_contents($info['zip']));
         $addonsInfo = $this->readZipFile($temAddonsPath, 'composer.json');
         if ($addonsInfo === false) {
             $this->error('此插件格式不正确');
@@ -73,23 +69,12 @@ class Addons extends Base
     public function lis()
     {
         if ($this->isAjax()) {
-            $info = [
-                'name'      => 'ank/comment',
-                'title'     => '插件标题',
-                'descr'     => '插件描述',
-                'author'    => '官方',
-                'downloads' => 10,
-                'version'   => '1.0.0',
-                'homepage'  => '',
-                'price'     => 100,
-                'qq'        => '',
-            ];
-            $list = [$info, $info, $info, $info, $info, $info, $info];
-            foreach ($list as $key => $value) {
-                if ($value['price'] == 0) {
-                    $list[$key]['price'] = '<b class="green">免费</b>';
-                }
-            }
+            $list = json_decode(file_get_contents($this->apiUrl), true);
+            // foreach ($list as $key => $value) {
+            //     if ($value['price'] == 0) {
+            //         $list[$key]['price'] = '<b class="green">免费</b>';
+            //     }
+            // }
             $this->success(['list' => $list, 'installed' => \utils\addons\Addons::getInstalledAddons()]);
         } else {
             $this->assign(['meta_title' => '插件管理']);
@@ -131,12 +116,18 @@ class Addons extends Base
      */
     private function addonsInstall($filePath = '', $addonsName = '')
     {
+        if (!is_file($filePath)) {
+            return;
+        }
         include $filePath;
         $sname = strtr($addonsName, [
             '/' => '\\',
             '-' => '',
         ]);
         $sname .= '\\InitScript';
+        if (!class_exists($sname)) {
+            return;
+        }
         $obj = new $sname();
         $obj->install();
     }
@@ -152,12 +143,18 @@ class Addons extends Base
      */
     private function addonsUnInstall($filePath = '', $addonsName = '')
     {
+        if (!is_file($filePath)) {
+            return;
+        }
         include $filePath;
         $sname = strtr($addonsName, [
             '/' => '\\',
             '-' => '',
         ]);
         $sname .= '\\InitScript';
+        if (!class_exists($sname)) {
+            return;
+        }
         $obj = new $sname();
         $obj->UnInstall();
     }
