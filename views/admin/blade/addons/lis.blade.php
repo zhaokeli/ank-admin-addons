@@ -7,22 +7,24 @@
             <a href="javascript:;" @click="searchAddons(-1)" class="btn">全部</a>
             <a href="javascript:;" @click="searchAddons(0)" class="btn"><i class="ank-icon ank-icon-hot"></i>免费</a>
             <a href="javascript:;" @click="searchAddons(1)" class="btn"><i class="ank-icon ank-icon-money"></i>付费</a>
-            {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-cloud-upload"></i>本地安装') !!}
             {!! get_auth_btn('javascript:;','<i class="ank-icon ank-icon-user"></i>会员信息') !!}
         </div>
     </div>
     <table width="100%">
         <tr>
-            <th>插件名称</th>
+            <th width="200">插件名称</th>
             <th>插件描述</th>
             <th width="100">作者</th>
             <th width="100">价格</th>
             <th width="100">下载</th>
             <th width="100">版本</th>
-            <th>操作</th>
+            <th width="200">操作</th>
         </tr>
         <tr v-for="item in list" v-show="item.show">
-            <td>@{{ item.title }}</td>
+            <td>
+                <a v-show="item.homepage" style="padding-right:5px;" title="插件文档" target="_blank" v-bind:href="item.homepage"><i class="ank-icon ank-icon-home"></i></a>
+                @{{ item.title }}
+            </td>
             <td>@{{ item.descr }}</td>
             <td class="td-center">@{{ item.author }}</td>
             <td class="td-center">
