@@ -10,6 +10,14 @@ class Addons
 
     protected static $loader = null;
 
+    /**
+     * 返回已经安装的插件
+     * @authname [name]     0
+     * @DateTime 2020-02-17
+     * @Author   mokuyu
+     *
+     * @return [type]
+     */
     public static function getInstalledAddons()
     {
         $list = [];
@@ -36,6 +44,16 @@ class Addons
         return $list;
     }
 
+    /**
+     * 遍历第一级组织目录名
+     * @authname [name]     0
+     * @DateTime 2020-02-17
+     * @Author   mokuyu
+     *
+     * @param  [type]   $addonsDir [description]
+     * @param  [type]   $loader    [description]
+     * @return [type]
+     */
     public static function load($addonsDir, $loader)
     {
         self::$addonsDir = $addonsDir;
@@ -54,25 +72,38 @@ class Addons
         }
     }
 
+    /**
+     * 加载组织目录中的怕有插件目录
+     * @authname [name]     0
+     * @DateTime 2020-02-17
+     * @Author   mokuyu
+     *
+     * @param  [type]   $dir [description]
+     * @return [type]
+     */
     private static function loadAddons($dir)
     {
         $handle = opendir($dir);
         while (false !== ($file = readdir($handle))) {
-            if ($file != '.' && $file != '..') {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $file)) {
-                    //遍历子目录中所有插件
-                    $path = $dir . DIRECTORY_SEPARATOR . $file;
-                    $info = json_decode(file_get_contents($path . '/composer.json'), true);
-
-                    $psr4 = $info['autoload']['psr-4'] ?? [];
-                    // var_dump($psr4);
-                    foreach ($psr4 as $key => $value) {
-                        // var_dump($)
-                        $filepath = realpath($path . '/' . $value);
-                        $filepath && self::$loader->addPsr4($key, $filepath, true);
-                    }
+            if ($file != '.' && $file != '..' && is_dir($dir . DIRECTORY_SEPARATOR . $file)) {
+                //遍历子目录中所有插件
+                $path = $dir . DIRECTORY_SEPARATOR . $file;
+                if (!is_file($path . '/composer.json')) {
+                    continue;
+                }
+                $info = json_decode(file_get_contents($path . '/composer.json'), true);
+                if (!$info) {
+                    continue;
+                }
+                $psr4 = $info['autoload']['psr-4'] ?? [];
+                // var_dump($psr4);
+                foreach ($psr4 as $key => $value) {
+                    // var_dump($)
+                    $filepath = realpath($path . '/' . $value);
+                    $filepath && self::$loader->addPsr4($key, $filepath, true);
                 }
             }
+
         }
     }
 }
