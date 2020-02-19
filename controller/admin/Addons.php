@@ -45,8 +45,12 @@ class Addons extends Base
         $zip     = new ZipArchive();
         $openRes = $zip->open($temAddonsPath);
         if ($openRes === true) {
-            $zip->extractTo($addonsPath);
+            if (!$zip->extractTo($addonsPath)) {
+                $this->error('插件解压失败');
+            }
             $zip->close();
+        } else {
+            $this->error('插件压缩包打开错误');
         }
         $srcDir = App::getAppPath() . '/addons/' . $addonsInfo['name'] . '/public';
         $desDir = App::getSiteRoot() . '/public';
@@ -54,7 +58,9 @@ class Addons extends Base
         if (is_dir($srcDir)) {
             Utils::copyDir($srcDir, $desDir);
         }
-        $this->addonsInstall($addonsPath . '/InitScript.php', $addonsInfo['name']);
+        if ($this->addonsInstall($addonsPath . '/InitScript.php', $addonsInfo['name']) !== true) {
+            $this->error('插件安装脚本执行失败');
+        }
         $this->success('插件安装成功');
     }
 
@@ -70,11 +76,6 @@ class Addons extends Base
     {
         if ($this->isAjax()) {
             $list = json_decode(file_get_contents($this->apiUrl), true);
-            // foreach ($list as $key => $value) {
-            //     if ($value['price'] == 0) {
-            //         $list[$key]['price'] = '<b class="green">免费</b>';
-            //     }
-            // }
             $this->success(['list' => $list, 'installed' => \utils\addons\Addons::getInstalledAddons()]);
         } else {
             $this->assign(['meta_title' => '插件管理']);
@@ -97,7 +98,9 @@ class Addons extends Base
         //删除静态资源,因为会误删除，所以下面就不删除啦,留给插件自己删除
         // Com::delAllFile(App::getSiteRoot() . '/public/' . $name, true);
         $temAddonsPath = App::getAppPath() . '/addons/' . $name;
-        $this->addonsUnInstall($temAddonsPath . '/InitScript.php', $name);
+        if ($this->addonsUnInstall($temAddonsPath . '/InitScript.php', $name) !== true) {
+            $this->error('插件卸载脚本执行失败');
+        }
         if (is_dir($temAddonsPath)) {
             Com::delAllFile($temAddonsPath, true);
         }
@@ -129,7 +132,8 @@ class Addons extends Base
             return;
         }
         $obj = new $sname();
-        $obj->install();
+
+        return $obj->install();
     }
 
     /**
@@ -156,7 +160,8 @@ class Addons extends Base
             return;
         }
         $obj = new $sname();
-        $obj->UnInstall();
+
+        return $obj->UnInstall();
     }
 
     /**
