@@ -29,7 +29,7 @@ class Addons extends Base
             $this->error('获取插件信息出错');
         }
         $temAddonsPath = App::getRuntimePath() . '/addons/' . $info['name'] . '-' . $info['version'] . '.zip';
-        is_dir(dirname($temAddonsPath)) or mkdir(dirname($temAddonsPath), 777, true);
+        is_dir(dirname($temAddonsPath)) or Utils::mkdir(dirname($temAddonsPath));
         is_file($temAddonsPath) or file_put_contents($temAddonsPath, file_get_contents($info['zip']));
         $addonsInfo = $this->readZipFile($temAddonsPath, 'composer.json');
         if ($addonsInfo === false) {
@@ -159,6 +159,31 @@ class Addons extends Base
         $obj->UnInstall();
     }
 
+    private function readZipFile($zipPath = '', $filePath = '')
+    {
+        $zip     = zip_open($zipPath);
+        $content = false;
+        if ($zip) {
+            while ($zip_entry = zip_read($zip)) {
+                // echo '<p>';
+                // echo 'Name: ' . zip_entry_name($zip_entry) . '<br />';
+
+                if (zip_entry_name($zip_entry) == $filePath && zip_entry_open($zip, $zip_entry)) {
+                    // echo 'File Contents:<br/>';
+                    $content = zip_entry_read($zip_entry);
+                    // echo "$contents<br />";
+                    zip_entry_close($zip_entry);
+                    break;
+                }
+                // echo '</p>';
+            }
+
+            zip_close($zip);
+        }
+
+        return $content;
+    }
+
     /**
      * 读取压缩包内文件
      * @authname [name]     0
@@ -170,7 +195,7 @@ class Addons extends Base
      * @param  string   $filePath 压缩包内文件相对路径
      * @return [type]
      */
-    private function readZipFile($zipPath = '', $filePath = '')
+    private function readZipFile2($zipPath = '', $filePath = '')
     {
         $file_protocol = 'zip://' . $zipPath . '#' . $filePath;
 
