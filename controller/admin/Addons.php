@@ -159,31 +159,6 @@ class Addons extends Base
         $obj->UnInstall();
     }
 
-    private function readZipFile($zipPath = '', $filePath = '')
-    {
-        $zip     = zip_open($zipPath);
-        $content = false;
-        if ($zip) {
-            while ($zip_entry = zip_read($zip)) {
-                // echo '<p>';
-                // echo 'Name: ' . zip_entry_name($zip_entry) . '<br />';
-
-                if (zip_entry_name($zip_entry) == $filePath && zip_entry_open($zip, $zip_entry)) {
-                    // echo 'File Contents:<br/>';
-                    $content = zip_entry_read($zip_entry);
-                    // echo "$contents<br />";
-                    zip_entry_close($zip_entry);
-                    break;
-                }
-                // echo '</p>';
-            }
-
-            zip_close($zip);
-        }
-
-        return $content;
-    }
-
     /**
      * 读取压缩包内文件
      * @authname [name]     0
@@ -195,21 +170,14 @@ class Addons extends Base
      * @param  string   $filePath 压缩包内文件相对路径
      * @return [type]
      */
-    private function readZipFile2($zipPath = '', $filePath = '')
+    private function readZipFile($zipPath = '', $filePath = '')
     {
-        $file_protocol = 'zip://' . $zipPath . '#' . $filePath;
-
-        $fp = fopen($file_protocol, 'rb');
-
-        if (!$fp) {
-            return false;
+        $content = false;
+        $zip     = new ZipArchive;
+        if ($zip->open($zipPath) === true) {
+            $content = $zip->getFromName($filePath);
+            $zip->close();
         }
-        $content = '';
-        while (!feof($fp)) {
-            $content .= fread($fp, 1024);
-        }
-
-        fclose($fp);
 
         return $content;
     }
