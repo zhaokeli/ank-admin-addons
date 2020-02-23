@@ -7,6 +7,7 @@ namespace ank\adminaddons;
 class InitScript extends \utils\admin\InitScript
 {
     private $data = [
+        'pid'        => 0,
         'url'        => 'Addons/lis',
         'title'      => '插件管理',
         'icon_class' => 'ank-icon ank-icon-plugin',
