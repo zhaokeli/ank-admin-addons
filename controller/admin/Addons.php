@@ -1,15 +1,16 @@
 <?php
-namespace controller\admin;
+
+namespace app\controller\admin;
 
 use ank\facade\App;
 use ank\Utils;
-use utils\admin\Com;
+use app\utils\admin\Com;
 use ZipArchive;
 
 /**
  * 默认控制器
  */
-class Addons extends Base
+class Addons extends Backend
 {
     protected $apiUrl = 'http://www.zkeli.com/store.php';
 
@@ -18,8 +19,7 @@ class Addons extends Base
      * @authname 安装插件     0
      * @DateTime 2020-02-09
      * @Author   mokuyu
-     *
-     * @return [type]
+     * @return   [type]
      */
     public function install()
     {
@@ -49,7 +49,8 @@ class Addons extends Base
                 $this->error('插件解压失败');
             }
             $zip->close();
-        } else {
+        }
+        else {
             $this->error('插件压缩包打开错误');
         }
         $srcDir = App::getAppPath() . '/addons/' . $addonsInfo['name'] . '/public';
@@ -69,15 +70,15 @@ class Addons extends Base
      * @authname 插件列表     0
      * @DateTime 2020-02-09
      * @Author   mokuyu
-     *
-     * @return [type]
+     * @return   [type]
      */
     public function lis()
     {
         if ($this->isAjax()) {
             $list = json_decode(file_get_contents($this->apiUrl), true);
             $this->success(['list' => $list, 'installed' => \utils\addons\Addons::getInstalledAddons()]);
-        } else {
+        }
+        else {
             $this->assign(['meta_title' => '插件管理']);
 
             return $this->fetch();
@@ -89,8 +90,7 @@ class Addons extends Base
      * @authname 卸载插件     0
      * @DateTime 2020-02-09
      * @Author   mokuyu
-     *
-     * @return [type]
+     * @return   [type]
      */
     public function uninstall()
     {
@@ -113,9 +113,8 @@ class Addons extends Base
      * @authname [name]     0
      * @DateTime 2020-02-12
      * @Author   mokuyu
-     *
-     * @param  string   $value [description]
-     * @return [type]
+     * @param string $value [description]
+     * @return   [type]
      */
     private function addonsInstall($filePath = '', $addonsName = '')
     {
@@ -141,9 +140,8 @@ class Addons extends Base
      * @authname [name]     0
      * @DateTime 2020-02-12
      * @Author   mokuyu
-     *
-     * @param  string   $value [description]
-     * @return [type]
+     * @param string $value [description]
+     * @return   [type]
      */
     private function addonsUnInstall($filePath = '', $addonsName = '')
     {
@@ -170,10 +168,9 @@ class Addons extends Base
      * @DateTime 2020-02-09
      * example readZipFile('E:/1.zip','composer.json')
      * @Author   mokuyu
-     *
-     * @param  string   $zipPath  压缩包全路径
-     * @param  string   $filePath 压缩包内文件相对路径
-     * @return [type]
+     * @param string $zipPath  压缩包全路径
+     * @param string $filePath 压缩包内文件相对路径
+     * @return   [type]
      */
     private function readZipFile($zipPath = '', $filePath = '')
     {

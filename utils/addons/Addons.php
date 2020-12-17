@@ -1,12 +1,13 @@
 <?php
-namespace utils\addons;
+
+namespace app\utils\addons;
 
 /**
  * 加载插件目录
  */
 class Addons
 {
-    protected static $addonsDir = '';
+    protected static string $addonsDir = '';
 
     protected static $loader = null;
 
@@ -15,10 +16,9 @@ class Addons
      * @authname [name]     0
      * @DateTime 2020-02-17
      * @Author   mokuyu
-     *
-     * @return [type]
+     * @return array [type]
      */
-    public static function getInstalledAddons()
+    public static function getInstalledAddons(): array
     {
         $list = [];
         if (is_dir(self::$addonsDir)) {
@@ -49,10 +49,9 @@ class Addons
      * @authname [name]     0
      * @DateTime 2020-02-17
      * @Author   mokuyu
-     *
-     * @param  [type]   $addonsDir [description]
-     * @param  [type]   $loader    [description]
-     * @return [type]
+     * @param $addonsDir
+     * @param $loader
+     * @return void [type]
      */
     public static function load($addonsDir, $loader)
     {
@@ -77,9 +76,8 @@ class Addons
      * @authname [name]     0
      * @DateTime 2020-02-17
      * @Author   mokuyu
-     *
-     * @param  [type]   $dir [description]
-     * @return [type]
+     * @param    [type]   $dir [description]
+     * @return void [type]
      */
     private static function loadAddons($dir)
     {
